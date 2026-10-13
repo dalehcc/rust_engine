@@ -1,13 +1,7 @@
 #[derive(Debug)]
-enum Side {
-    Buy,
-    Sell,
-}
-
-#[derive(Debug)]
 enum OrderType {
     Market,
-    Limit(f64),
+    Limit(u64),    //no f64 here to avoid float issue
 }
 
 
@@ -15,23 +9,57 @@ enum OrderType {
 struct Order {
     instrument: String,
     client_id: u32,
-    exchange_id: Option<u32>,
-    side: Side,
+    exchange_id: Option<u32>,  //Order may not have this until exchange confirms
     order_type: OrderType,
-    quantity: u32,
+    quantity: i64,   // sign of qty to represent bull/sell
+}
+
+#[derive(Debug)]
+enum OrderError {
+    InvalidQty,
+    InvalidLimitPrice,
+}
+
+impl Order {
+    fn new(instrument: String,
+           client_id: u32,
+           order_type: OrderType,
+           quantity: i64) -> Result<Order, OrderError> {
+            
+            if quantity == 0 {return Err(OrderError::InvalidQty)}
+            
+            if let OrderType::Limit(price) = order_type {
+                if price == 0 {return Err(OrderError::InvalidLimitPrice)}
+            }
+
+            Ok(Order{
+                    instrument,
+                    client_id,
+                    exchange_id: None,
+                    order_type,
+                    quantity,
+                })
+    }
+}
+
+
+#[derive(Debug)]
+struct Fill {
+    client_id: u32,
+    fill_price: u64,
+    quantity: i64,
 }
 
 fn main() {
     
-    let Order1 = Order {
-        instrument: String::from("XAL"),
-        client_id: 123,
-        exchange_id: std::option::Option::Some(123),
-        side: Side::Buy,
-        order_type: OrderType::Market,
-        quantity: 4,
-    };
+    let test_order = Order::new(
+        String::from("XAL"),
+        123,
+        OrderType::Market,
+        4);
     
     
-    println!("My first order is {:?}", Order1)
+    
+    println!("My first order is {:?}", test_order);
+    
 }
