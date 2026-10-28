@@ -47,9 +47,4 @@ cargo run
 ## Roadmap
 
 - [x] **Unit 1:** core types (`Order`, `OrderType`, `OrderError`, `Fill`) with validation and unit tests
-- [ ] Order state machine (new → acked → partially filled → filled / cancelled)
-- [ ] Positions and PnL (average entry price, realized and unrealized PnL)
-- [ ] Pre-trade risk checks (position and notional limits, kill switch)
-- [ ] Venue port and simulated exchange adapter
-- [ ] Strategy interface and market data feed
-- [ ] Hyperliquid adapter
+- [ ] **Unit 2:** order state machine (status and filled quantity, fills applied with validation, cancel)
