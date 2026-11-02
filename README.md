@@ -12,23 +12,20 @@ The engine uses a hexagonal (ports and adapters) design. The core holds the trad
 
 ```mermaid
 flowchart TB
-    MD["Market data feed"]
+    MD["Market data feed"] -- market data --> CORE
 
-    subgraph CORE["Core (no venue dependencies)"]
-        direction TB
-        S["Strategy"] --> R["Pre-trade risk"] --> OM["Order management"]
-        OM -- fills --> P["Positions & PnL"]
+    subgraph CORE["Core"]
+        direction LR
+        S["Strategy"] --> R["Pre-trade risk"] --> OM["Order mgmt"] -- fills --> P["Positions & PnL"]
     end
+
+    CORE -- "orders, cancels" --> ADAPTERS
+    ADAPTERS -- "acks, rejects, fills" --> CORE
 
     subgraph ADAPTERS["Venue adapters"]
         direction LR
-        SIM["Simulated exchange<br/>(matching)"]
-        HL["Hyperliquid<br/>(later)"]
+        SIM["Simulated exchange"] ~~~ HL["Hyperliquid (later)"]
     end
-
-    MD -- "market data port" --> S
-    OM -- "venue port: orders, cancels" --> ADAPTERS
-    ADAPTERS -- "venue port: acks, rejects, fills" --> OM
 ```
 
 - **Core:** strategy, pre-trade risk, order management, positions and PnL. It defines the ports and depends on nothing outside itself.
