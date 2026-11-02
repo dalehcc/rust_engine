@@ -11,16 +11,17 @@ This is the client side of trading, not an exchange. The engine turns market dat
 The engine uses a hexagonal (ports and adapters) design. The core holds the trading logic and has no dependency on any venue. Venues plug in as adapters that implement the core's ports.
 
 ```mermaid
-flowchart LR
+flowchart TB
     MD["Market data feed"]
 
     subgraph CORE["Core (no venue dependencies)"]
-        direction LR
+        direction TB
         S["Strategy"] --> R["Pre-trade risk"] --> OM["Order management"]
         OM -- fills --> P["Positions & PnL"]
     end
 
     subgraph ADAPTERS["Venue adapters"]
+        direction LR
         SIM["Simulated exchange<br/>(matching)"]
         HL["Hyperliquid<br/>(later)"]
     end
